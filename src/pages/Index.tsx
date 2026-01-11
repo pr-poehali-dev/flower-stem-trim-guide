@@ -2,31 +2,32 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
-import { Download } from 'lucide-react';
+import html2canvas from 'html2canvas';
 
 type Format = 'vertical' | 'horizontal';
 
 const Index = () => {
   const [format, setFormat] = useState<Format>('vertical');
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const element = document.getElementById('infographic');
     if (!element) return;
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: '#F8F5F2',
+        logging: false,
+        useCORS: true,
+      });
 
-    const width = format === 'vertical' ? 1080 : 1920;
-    const height = format === 'vertical' ? 1920 : 1080;
-
-    canvas.width = width;
-    canvas.height = height;
-
-    const link = document.createElement('a');
-    link.download = `flower-care-infographic-${format}.png`;
-    link.href = canvas.toDataURL();
-    link.click();
+      const link = document.createElement('a');
+      link.download = `flower-care-infographic-${format}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (error) {
+      console.error('Export failed:', error);
+    }
   };
 
   return (
@@ -83,86 +84,84 @@ const Index = () => {
               </div>
 
               <div className={`flex ${format === 'vertical' ? 'flex-col' : 'flex-row'} gap-6 flex-1`}>
-                <Card className="flex-1 bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-200 p-6 flex flex-col items-center justify-center text-center hover:shadow-lg transition-shadow">
-                  <div className="w-24 h-24 mb-4 rounded-full bg-red-100 flex items-center justify-center">
-                    <Icon name="AlertCircle" size={48} className="text-red-600" />
+                <Card className="flex-1 bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-200 p-6 flex flex-col items-center text-center hover:shadow-lg transition-shadow relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                    <div className="absolute top-4 left-4 w-12 h-12 rounded-full border-2 border-red-300"></div>
+                    <div className="absolute bottom-8 right-6 w-8 h-8 rounded-full border-2 border-red-300"></div>
                   </div>
-                  <h3 className="text-xl font-bold text-[#2E2E2E] mb-3">
-                    Проблема
-                  </h3>
-                  <p className="text-lg font-semibold text-red-700 mb-2">
-                    Старый срез мешает<br />впитывать воду
-                  </p>
-                  <p className="text-sm text-[#2E2E2E]/70">
-                    Со временем срез затягивается, образуются воздушные пробки — цветок «голодает»
-                  </p>
-                  <div className="mt-4 w-full h-32 flex items-center justify-center">
-                    <div className="relative">
-                      <div className="w-3 h-24 bg-gradient-to-b from-green-600 to-green-800 rounded-full relative">
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-2 bg-gray-400 rounded"></div>
-                      </div>
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-pink-600"></div>
-                      </div>
+                  <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                    <div className="mb-4">
+                      <img 
+                        src="https://cdn.poehali.dev/projects/67594705-ce74-4c99-a404-16ff9f9682e0/files/134993c5-a82d-4675-9d93-07a788cdc287.jpg" 
+                        alt="Проблема" 
+                        className="w-48 h-48 object-cover rounded-lg shadow-md" 
+                        crossOrigin="anonymous"
+                      />
                     </div>
+                    <h3 className="text-xl font-bold text-[#2E2E2E] mb-3">
+                      Проблема
+                    </h3>
+                    <p className="text-lg font-semibold text-red-700 mb-2">
+                      Старый срез мешает<br />впитывать воду
+                    </p>
+                    <p className="text-sm text-[#2E2E2E]/70">
+                      Со временем срез затягивается, образуются воздушные пробки — цветок «голодает»
+                    </p>
                   </div>
                 </Card>
 
-                <Card className="flex-1 bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 p-6 flex flex-col items-center justify-center text-center hover:shadow-lg transition-shadow">
-                  <div className="w-24 h-24 mb-4 rounded-full bg-green-100 flex items-center justify-center">
-                    <Icon name="Scissors" size={48} className="text-[#4A7C59]" />
-                  </div>
-                  <h3 className="text-xl font-bold text-[#2E2E2E] mb-3">
-                    Решение
-                  </h3>
-                  <p className="text-lg font-semibold text-[#4A7C59] mb-2">
-                    Свежий срез<br />под углом 45°
-                  </p>
-                  <p className="text-sm text-[#2E2E2E]/70">
-                    Угол увеличивает площадь контакта с водой. Режьте только острым инструментом
-                  </p>
-                  <div className="mt-4 w-full h-32 flex items-center justify-center">
-                    <div className="relative">
-                      <div className="w-3 h-24 bg-gradient-to-b from-green-500 to-green-700 rounded-t-full relative">
-                        <div className="absolute bottom-0 left-0 w-6 h-3 bg-green-600" style={{ clipPath: 'polygon(0 0, 100% 100%, 0 100%)' }}></div>
-                      </div>
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-300 to-pink-500"></div>
-                      </div>
-                      <div className="absolute -right-8 bottom-2">
-                        <Icon name="Scissors" size={24} className="text-[#4A7C59]" />
-                      </div>
+                <Card className="flex-1 bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 p-6 flex flex-col items-center text-center hover:shadow-lg transition-shadow relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                    <div className="absolute top-6 right-4 w-16 h-16 opacity-20">
+                      <Icon name="Scissors" size={64} className="text-[#4A7C59]" />
                     </div>
+                    <div className="absolute bottom-12 left-8 w-10 h-10 rounded-full border-2 border-green-400"></div>
+                  </div>
+                  <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                    <div className="mb-4">
+                      <img 
+                        src="https://cdn.poehali.dev/projects/67594705-ce74-4c99-a404-16ff9f9682e0/files/a3867ce9-d0b9-486b-8999-a4825b37f965.jpg" 
+                        alt="Решение" 
+                        className="w-48 h-48 object-cover rounded-lg shadow-md"
+                        crossOrigin="anonymous"
+                      />
+                    </div>
+                    <h3 className="text-xl font-bold text-[#2E2E2E] mb-3">
+                      Решение
+                    </h3>
+                    <p className="text-lg font-semibold text-[#4A7C59] mb-2">
+                      Свежий срез<br />под углом 45°
+                    </p>
+                    <p className="text-sm text-[#2E2E2E]/70">
+                      Угол увеличивает площадь контакта с водой. Режьте только острым инструментом
+                    </p>
                   </div>
                 </Card>
 
-                <Card className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 p-6 flex flex-col items-center justify-center text-center hover:shadow-lg transition-shadow">
-                  <div className="w-24 h-24 mb-4 rounded-full bg-blue-100 flex items-center justify-center">
-                    <Icon name="Sparkles" size={48} className="text-blue-600" />
+                <Card className="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 p-6 flex flex-col items-center text-center hover:shadow-lg transition-shadow relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                    <div className="absolute top-8 left-6 w-3 h-3 rounded-full bg-blue-400 animate-ping"></div>
+                    <div className="absolute bottom-16 right-8 w-4 h-4 rounded-full bg-blue-400 animate-ping" style={{ animationDelay: '0.3s' }}></div>
+                    <div className="absolute top-1/2 right-12 w-2 h-2 rounded-full bg-blue-400 animate-ping" style={{ animationDelay: '0.6s' }}></div>
                   </div>
-                  <h3 className="text-xl font-bold text-[#2E2E2E] mb-3">
-                    Результат
-                  </h3>
-                  <p className="text-lg font-semibold text-blue-700 mb-2">
-                    Цветы пьют активнее —<br />букет живёт дольше!
-                  </p>
-                  <p className="text-sm text-[#2E2E2E]/70">
-                    Повторяйте обрезку каждые 1–2 дня при смене воды
-                  </p>
-                  <div className="mt-4 w-full h-32 flex items-center justify-center relative">
-                    <div className="relative">
-                      <div className="w-3 h-24 bg-gradient-to-b from-green-400 to-green-600 rounded-t-full relative">
-                        <div className="absolute bottom-0 left-0 w-6 h-3 bg-green-500" style={{ clipPath: 'polygon(0 0, 100% 100%, 0 100%)' }}></div>
-                      </div>
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-300 to-pink-500 animate-pulse"></div>
-                      </div>
+                  <div className="relative z-10 flex flex-col items-center justify-center h-full">
+                    <div className="mb-4">
+                      <img 
+                        src="https://cdn.poehali.dev/projects/67594705-ce74-4c99-a404-16ff9f9682e0/files/45e1f6be-e391-4b33-8794-7b677e8cf05d.jpg" 
+                        alt="Результат" 
+                        className="w-48 h-48 object-cover rounded-lg shadow-md"
+                        crossOrigin="anonymous"
+                      />
                     </div>
-                    <div className="absolute -bottom-4 flex gap-2">
-                      <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce"></div>
-                      <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      <div className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                    </div>
+                    <h3 className="text-xl font-bold text-[#2E2E2E] mb-3">
+                      Результат
+                    </h3>
+                    <p className="text-lg font-semibold text-blue-700 mb-2">
+                      Цветы пьют активнее —<br />букет живёт дольше!
+                    </p>
+                    <p className="text-sm text-[#2E2E2E]/70">
+                      Повторяйте обрезку каждые 1–2 дня при смене воды
+                    </p>
                   </div>
                 </Card>
               </div>
